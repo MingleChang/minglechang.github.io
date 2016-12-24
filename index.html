@@ -61,6 +61,58 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-iOS自动打包" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/24/iOS自动打包/" class="article-date">
+  <time datetime="2016-12-24T03:46:45.000Z" itemprop="datePublished">2016-12-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/24/iOS自动打包/">iOS自动打包</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>做iOS开发这么久，一直给测试打包都是使用Xcode先进行Archive，然后再将对应的xcarchive文件Export为一个ipa文件。当然做了这么久感觉也没有什么不对的，但是前段时间我们老大希望能让我准备一个脚本，然后以后就让运维通过脚本打包，这样一想也的确省去不少麻烦，就算不让运维打包，我们自己用脚本也省去了不断点下一步的麻烦操作，于是我就开始通过谷歌和度娘查找相关资料，根据网上资料，网上流传的打包脚本无外两种：</p>
+<p>第一种是先通过xcodebuild编译工程得到一个XXX.app文件，脚本如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">xcodebuild -project XXXXXX.xcodeproj -scheme XXXXXX -configuration Release -sdk iphoneos build CODE_SIGN_IDENTITY=&quot;XXXXXX&quot; PROVISIONING_PROFILE=&quot;XXXXXXX&quot;</div><div class="line">xcodebuild -workspace XXXXXX.xcworkspace -scheme XXXXXX -configuration Release -sdk iphoneos build CODE_SIGN_IDENTITY=&quot;XXXXXX&quot; PROVISIONING_PROFILE=&quot;XXXXXXX&quot;</div></pre></td></tr></table></figure>
+<p>这里有两句脚本，这里的两句是二选一的，如果你是需要打包的是一个普通的project就是用第一句，如果你需要打包的是一个workspace（当你使用了CocoaPods添加第三方库，你就需要使用第二句）就用第二句。<br>然后在使用xcrun将XXX.app文件转为XXX.ipa，脚本如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">xcrun -sdk iphoneos -v PackageApplication ./Build/Products/Release-iphoneos/XXXXXX.app -o bin/XXXXXX.ipa</div></pre></td></tr></table></figure>
+<p>这里CODE_SIGN_IDENTITY等号后面的就是对应的开发者证书，PROVISIONING_PROFILE等号后面对应的是PROVISIONING_PROFILE的uuid。<br>这种方式打包相当于先在Xcode进行build，然后将Products目录下的app文件直接拖入iTunes所得，但是我并不建议该种方法，因为这种方法并不完全同于我们以前的打包流程。</p>
+<p>第二种就是先通过xcodebuild archive将项目工程打包为xcarchive文件，脚本如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">xcodebuild archive -project XXXX.xcodeproj -scheme XXXX -archivePath bin/XXXX.xcarchive</div><div class="line">xcodebuild archive -workspace XXXX.xcworkspace -scheme XXXX -archivePath bin/XXXX.xcarchive</div></pre></td></tr></table></figure>
+<p>这里同样是两句选一句，分别针对project和workspace<br>然后使用xcodebuild -exportArchive将xcarchive文件export为对应该ipa文件，脚本如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">xcodebuild -exportArchive -archivePath bin/XXXX.xcarchive -exportPath bin/$XXXX -exportFormat IPA -exportProvisioningProfile &quot;[PROVISION_PROFILE]&quot;</div></pre></td></tr></table></figure>
+<p>这里就是将的xcarchive通过使用PROVISION_PROFILE文件打包为ipa文件，这里[PROVISION_PROFILE]代表项目对应的PROVISION_PROFILE文件的文件名。<br>这种方式的打包是最接近于我之前手动打包的方式。</p>
+<p>这里附上完整脚本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line"></div><div class="line">PROJECT_NAME=&quot;XXXXX&quot;</div><div class="line">WORKSPACE_NAME=&quot;XXXXX&quot;</div><div class="line">PROVISION_PROFILE=&quot;XXXXXX&quot;</div><div class="line"></div><div class="line">rm -rf bin</div><div class="line"></div><div class="line"># 如果是打包xcodeproj就使用这句</div><div class="line"># xcodebuild archive -project $&#123;PROJECT_NAME&#125;.xcodeproj -scheme $&#123;PROJECT_NAME&#125; -archivePath bin/$&#123;PROJECT_NAME&#125;.xcarchive</div><div class="line"></div><div class="line"># 如果是打包xcworkspace就使用这句</div><div class="line">xcodebuild archive -workspace $&#123;WORKSPACE_NAME&#125;.xcworkspace -scheme $&#123;WORKSPACE_NAME&#125; -archivePath bin/$&#123;WORKSPACE_NAME&#125;.xcarchive</div><div class="line"></div><div class="line">xcodebuild -exportArchive -archivePath bin/$&#123;WORKSPACE_NAME&#125;.xcarchive -exportPath bin/$&#123;WORKSPACE_NAME&#125; -exportFormat IPA -exportProvisioningProfile &quot;$&#123;PROVISION_PROFILE&#125;&quot;</div></pre></td></tr></table></figure>
+<p>这里只需修改PROJECT_NAME，WORKSPACE_NAME和PROVISION_PROFILE即可。<br>脚本地址：<a href="https://github.com/MingleChang/ios_auto_build.git" target="_blank" rel="external">ios_auto_build</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/12/24/iOS自动打包/" data-id="cix2ovbpc0004scgtx2vqvwdt" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/打包/">打包</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-iOS10-Notification-Content-Extension" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/12/24/iOS10-Notification-Content-Extension/" class="article-date">
@@ -118,7 +170,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/24/iOS10-Notification-Content-Extension/" data-id="cix2onyev0000rfgtotsgw9gq" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/12/24/iOS10-Notification-Content-Extension/" data-id="cix2ovboy0000scgtfd8l6s1c" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Notification/">Notification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS10/">iOS10</a></li></ul>
@@ -207,7 +259,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/21/iOS10-Notification-Service-Extension/" data-id="cix2onyf10001rfgtce98ge3d" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/12/21/iOS10-Notification-Service-Extension/" data-id="cix2ovbpa0003scgtv1unat0e" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Notification/">Notification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS10/">iOS10</a></li></ul>
@@ -306,7 +358,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/21/iOS10-UserNotification-Framework/" data-id="cix2onyf80003rfgtn1toexnn" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/12/21/iOS10-UserNotification-Framework/" data-id="cix2ovbp40001scgtb4225luw" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/UserNotification/">UserNotification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ios/">ios</a></li></ul>
@@ -330,7 +382,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Notification/">Notification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UserNotification/">UserNotification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS10/">iOS10</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ios/">ios</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Notification/">Notification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UserNotification/">UserNotification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS10/">iOS10</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ios/">ios</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/打包/">打包</a></li></ul>
     </div>
   </div>
 
@@ -340,7 +392,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Notification/" style="font-size: 20px;">Notification</a> <a href="/tags/UserNotification/" style="font-size: 10px;">UserNotification</a> <a href="/tags/iOS10/" style="font-size: 20px;">iOS10</a> <a href="/tags/ios/" style="font-size: 10px;">ios</a>
+      <a href="/tags/Notification/" style="font-size: 20px;">Notification</a> <a href="/tags/UserNotification/" style="font-size: 10px;">UserNotification</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/iOS10/" style="font-size: 20px;">iOS10</a> <a href="/tags/ios/" style="font-size: 10px;">ios</a> <a href="/tags/打包/" style="font-size: 10px;">打包</a>
     </div>
   </div>
 
@@ -360,6 +412,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/12/24/iOS自动打包/">iOS自动打包</a>
+          </li>
         
           <li>
             <a href="/2016/12/24/iOS10-Notification-Content-Extension/">iOS10 Notification Content Extension</a>
