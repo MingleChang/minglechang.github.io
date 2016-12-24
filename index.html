@@ -61,6 +61,75 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-iOS10-Notification-Content-Extension" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/24/iOS10-Notification-Content-Extension/" class="article-date">
+  <time datetime="2016-12-24T03:13:56.000Z" itemprop="datePublished">2016-12-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/24/iOS10-Notification-Content-Extension/">iOS10 Notification Content Extension</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>iOS10对推送通知的增加了两个扩展框架，之前介绍了Notification Service Extension，允许在收到推送之后，通知展示之前对推送信息进行二次处理；而另一个就是Notification Content Extension，允许开发者对推送信息自定义一个展示界面，在这个界面里你可以自定义任何视图，但是有一个限制，这个界面不能有用户交互，也就是这个界面用户不能点击它。但是对于整个通知我还是可以继续使用actions进行交互。<br>首先我们介绍下这个推送界面的组成，当我收到一条新的推送，我们下拉这条推送就会出现下面如图界面：<br><img src="https://github.com/MingleChang/img/raw/master/2016/12/24/1.jpg" alt=""></p>
+<p>Header是属于系统默认的部分，所有推送都有这个Header且不可修改</p>
+<p>Custom Content就是我们要介绍的Notification Content Extension的内容，在这里你可以自定义为任何样式。</p>
+<p>Default Content系统默认的推送展示样式，不可修改，但可以选择不显示（这个我们后面会说到）。</p>
+<p>Actions就是我们之前介绍UserNotification.Framework是介绍过的，这里用户可以进行一些操作并体现到Custom Content中。</p>
+<p>现在我们来创建一个Notification Content Extension的Target，Xcode会自动创建如下图的几个文件：<br><img src="https://github.com/MingleChang/img/raw/master/2016/12/24/2.png" alt=""></p>
+<p>NotificationViewController就是我们Custom Conten的代码部分，MainInterface.storyboard就是布局部分，Info.plist就是配置文件。</p>
+<p>打开Info.plist文件，我们可以看到如下内容：<br><img src="https://github.com/MingleChang/img/raw/master/2016/12/24/3.jpeg" alt=""></p>
+<p>这里的UNNotificationExtensionCategory就是响应这个Content Extension的通知的categoryId，那如果有多个categoryId都对应的是这个Content Extension怎么办呢？那么我们可以将UNNotificationExtensionCategory改为一个数组，数组中包含多个categoryId，如图：<br><img src="https://github.com/MingleChang/img/raw/master/2016/12/24/4.jpg" alt="">  </p>
+<p>UNNotificationExtensionInitialContentSizeRatio这个是Content Extension初始化时候的高宽比。</p>
+<p>除了这两个我之前说过Default Content可以选择是否显示，那么如果我们希望不显示Default Content，我们可以在NSExtensionAttributes增加UNNotificationExtensionDefaultContentHidden并设置为YES，如图：<br><img src="https://github.com/MingleChang/img/raw/master/2016/12/24/5.jpg" alt=""> </p>
+<p>然后我们在MainInterface.storyboard中的ViewController中增加一些子视图：<br><img src="https://github.com/MingleChang/img/raw/master/2016/12/24/6.jpg" alt="">  </p>
+<p>一个imageView和两个Label，并将其关联为NotificationViewController的属性：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@property (weak, nonatomic) IBOutlet UIImageView *imageView;</div><div class="line">@property (weak, nonatomic) IBOutlet UILabel *titleLabel;</div><div class="line">@property (weak, nonatomic) IBOutlet UILabel *contentLabel;</div></pre></td></tr></table></figure>
+<p>现在我们开始处理NotificationViewController，NotificationViewController实际上就是一个继承于UIViewController的一个视图控制器，但是他实现了UNNotificationContentExtension协议。<br>UNNotificationContentExtension协议主要有两个方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">- (void)didReceiveNotification:(UNNotification *)notification;</div><div class="line">@optional</div><div class="line">- (void)didReceiveNotificationResponse:(UNNotificationResponse *)response completionHandler:(void (^)(UNNotificationContentExtensionResponseOption option))completion;</div></pre></td></tr></table></figure>
+<p>第一个方法是当NotificationContentExtension收到指定categoryId的推送时，那么就将会响应这个方法，然后我们可以根据通知内容设置我们的界面。<br>第二个方法是一个可选方法，这个就是当用户进行Actions的操作是，NotificationContentExtension会响应的方法，我们可以根据对应的Action修改NotificationContentExtension界面或者进行网络请求等操作。<br>我先根据我们收到推送修改对应的Content Extension界面，那么我们在didReceiveNotification：中添加如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">- (void)didReceiveNotification:(UNNotification *)notification &#123;</div><div class="line">    self.imageView.image=[UIImage imageNamed:@&quot;push_image&quot;];</div><div class="line">    self.titleLabel.text=notification.request.content.title;</div><div class="line">    self.contentLabel.text=notification.request.content.body;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>那么当我们收到推送之后，我们的Content Extension界面界面将会展示如下：<br><img src="https://github.com/MingleChang/img/raw/master/2016/12/24/7.jpg" alt="">  </p>
+<p>之前在介绍Service Extension时，我们可以根据推送请求一些图片等并设置到attachments，那么当我们在Content Extension中收到一个包含attachments的推送时，我们要如何展示，这里我们将代码如下修改：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">- (void)didReceiveNotification:(UNNotification *)notification &#123;</div><div class="line">    if (notification.request.content.attachments.count==0) &#123;</div><div class="line">        self.imageView.image=[UIImage imageNamed:@&quot;push_image&quot;];</div><div class="line">    &#125;else&#123;</div><div class="line">        UNNotificationAttachment *lAttachment=notification.request.content.attachments.firstObject;</div><div class="line">        if (lAttachment) &#123;</div><div class="line">            if ([lAttachment.URL startAccessingSecurityScopedResource]) &#123;</div><div class="line">                self.imageView.image = [UIImage imageWithContentsOfFile:lAttachment.URL.path];</div><div class="line">                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^&#123;</div><div class="line">                    [lAttachment.URL stopAccessingSecurityScopedResource];</div><div class="line">                &#125;);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    self.titleLabel.text=notification.request.content.title;</div><div class="line">    self.contentLabel.text=notification.request.content.body;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里如果我们收到的推送包含attachments内容，那么我们就将图片赋值给imageView，但是attachment是由系统管理的，系统会把它们单独的管理，这意味着它们存储在我们sandbox之外。所以这里我们要使用attachment之前，我们需要告诉iOS系统，我们需要使用它，并且在使用完毕之后告诉系统我们使用完毕了。对应上述代码就是-startAccessingSecurityScopedResource和-stopAccessingSecurityScopedResource的操作。<br>这是如果我们收到一个带图片的推送，Content Extension展示如下：  </p>
+<p><img src="https://github.com/MingleChang/img/raw/master/2016/12/24/8.jpg" alt="">   </p>
+<p>这里的imageView展示的就是在Service Extension下载的图片。</p>
+<p>然后我们来介绍UNNotificationContentExtension协议的第二个方法，- (void)didReceiveNotificationResponse:(UNNotificationResponse *)response completionHandler:(void (^)(UNNotificationContentExtensionResponseOption option))completion<br>该方法有两个参数，第一个response就是点击Actions传递过来的参数，我们可以根据response来判断是点击了哪个Actions，并对其做对应的处理，第二个completion是一个block，当我处理完response后需要回调的block，系统根据该block做后续处理，这个block有一个参数UNNotificationContentExtensionResponseOption，这个是UNNotificationContentExtensionResponseOption是一个枚举，定义如下：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">typedef NS_ENUM(NSUInteger, UNNotificationContentExtensionResponseOption) &#123;</div><div class="line">    UNNotificationContentExtensionResponseOptionDoNotDismiss,</div><div class="line">    UNNotificationContentExtensionResponseOptionDismiss,</div><div class="line">    UNNotificationContentExtensionResponseOptionDismissAndForwardAction,</div><div class="line">&#125; __IOS_AVAILABLE(10_0) __TVOS_UNAVAILABLE __WATCHOS_UNAVAILABLE __OSX_UNAVAILABLE;</div></pre></td></tr></table></figure>
+<p>UNNotificationContentExtensionResponseOptionDoNotDismiss代表不关闭Content Extension<br>UNNotificationContentExtensionResponseOptionDismiss代表关闭Content Extension，这里需要注意如果点击的action类型为UNNotificationActionOptionForeground，Content Extension仍然不会关闭<br>UNNotificationContentExtensionResponseOptionDismissAndForwardAction代表关闭Content Extension，且打开App。<br>这里我们修改代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">- (void)didReceiveNotificationResponse:(UNNotificationResponse *)response completionHandler:(void (^)(UNNotificationContentExtensionResponseOption option))completion&#123;</div><div class="line">    if ([response.actionIdentifier isEqualToString:kCategoryTestInputKey]) &#123;</div><div class="line">        UNTextInputNotificationResponse *inputResponse=(UNTextInputNotificationResponse *)response;</div><div class="line">        NSString *lString=inputResponse.userText;</div><div class="line">        self.contentLabel.text=lString;</div><div class="line">    &#125;else if ([response.actionIdentifier isEqualToString:kCategoryTestConfirmKey]) &#123;</div><div class="line">        self.contentLabel.text=@&quot;Confirm&quot;;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^&#123;</div><div class="line">        completion(UNNotificationContentExtensionResponseOptionDismiss);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里我们根据对应的Action修改contentLabel的显示，并在1.5s后关闭Content Extension，当然你也可以在这里进行一些网络请求后在执行block。<br>那么我们在收到推送点击了Confirm后，Content Extension将修改为如下：<br><img src="https://github.com/MingleChang/img/raw/master/2016/12/24/9.jpg" alt="">  </p>
+<p>对于Content Extension的介绍就如下了。</p>
+<p>代码下载：<a href="https://github.com/MingleChang/UserNotificationsTest.git" target="_blank" rel="external">UserNotificationsTest</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/12/24/iOS10-Notification-Content-Extension/" data-id="cix2onyev0000rfgtotsgw9gq" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Notification/">Notification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS10/">iOS10</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-iOS10-Notification-Service-Extension" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/12/21/iOS10-Notification-Service-Extension/" class="article-date">
@@ -138,7 +207,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/21/iOS10-Notification-Service-Extension/" data-id="ciwz3b0cp0001axgt2djrj2ml" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/12/21/iOS10-Notification-Service-Extension/" data-id="cix2onyf10001rfgtce98ge3d" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Notification/">Notification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS10/">iOS10</a></li></ul>
@@ -237,7 +306,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/21/iOS10-UserNotification-Framework/" data-id="ciwz3b0ci0000axgtzy4ipbrj" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/12/21/iOS10-UserNotification-Framework/" data-id="cix2onyf80003rfgtn1toexnn" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/UserNotification/">UserNotification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ios/">ios</a></li></ul>
@@ -271,7 +340,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Notification/" style="font-size: 10px;">Notification</a> <a href="/tags/UserNotification/" style="font-size: 10px;">UserNotification</a> <a href="/tags/iOS10/" style="font-size: 10px;">iOS10</a> <a href="/tags/ios/" style="font-size: 10px;">ios</a>
+      <a href="/tags/Notification/" style="font-size: 20px;">Notification</a> <a href="/tags/UserNotification/" style="font-size: 10px;">UserNotification</a> <a href="/tags/iOS10/" style="font-size: 20px;">iOS10</a> <a href="/tags/ios/" style="font-size: 10px;">ios</a>
     </div>
   </div>
 
@@ -291,6 +360,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/12/24/iOS10-Notification-Content-Extension/">iOS10 Notification Content Extension</a>
+          </li>
         
           <li>
             <a href="/2016/12/21/iOS10-Notification-Service-Extension/">iOS10 Notification Service Extension</a>
