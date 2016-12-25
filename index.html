@@ -102,11 +102,142 @@
 <p><strong>inet_pton和inet_ntop函数</strong>  </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">#include &lt;arpa/inet.h&gt;</div><div class="line">int		 inet_pton(int family, const char *strptr, void *addrptr);</div><div class="line">const char	*inet_ntop(int family, const void *addrptr, char *strptr, socklen_t len);</div></pre></td></tr></table></figure>
 <p>inet_pton尝试转换由strptr指针所指的字符串，并通过addrptr指针存放二进制结果。若成功则返回值为1，若输入不是有效的表达格式则为0，若出错则为-1<br>inet_ntop是进行相反的转换，从数值格式（addrptr）转换到表达式（strptr）。len参数是目标存储单元的大小，以免该函数溢出其调用者的缓冲区。为有助于指定这个大小，在头文件中有如下定义：<br><code>#define INET_ADDRSTRLEN 16</code><br><code>#define    INET6_ADDRSTRLEN    46</code><br>如果len太小，不足以容纳表达格式结果（包括结尾的空字符），那么返回一个空指针，并置errno为ENOSPC。<br>inet_ntop函数的strptr参数不可以是一个空指针。调用者必须为目标存储单元分配内存并指定其大小。调用成功时，这个指针就是该函数的返回值。</p>
+<p><strong>socket函数</strong>  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#include &lt;sys/socket.h&gt;</div><div class="line">int	socket(int family, int type, int protocol);</div></pre></td></tr></table></figure>
+<p>family参数指名协议族，该参数也往往被称为协议域。  </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">family</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">AF_INET</td>
+<td style="text-align:center">IPv4协议</td>
+</tr>
+<tr>
+<td style="text-align:center">AF_INET6</td>
+<td style="text-align:center">IPv6协议</td>
+</tr>
+<tr>
+<td style="text-align:center">AF_LOCAL</td>
+<td style="text-align:center">Unix域协议</td>
+</tr>
+<tr>
+<td style="text-align:center">AF_ROUTE</td>
+<td style="text-align:center">路由套接字</td>
+</tr>
+<tr>
+<td style="text-align:center">AF_KEY</td>
+<td style="text-align:center">密钥套接字</td>
+</tr>
+</tbody>
+</table>
+<p>type参数指名套接字类型。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">type</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">SOCK_STREAM</td>
+<td style="text-align:center">字节流套接字</td>
+</tr>
+<tr>
+<td style="text-align:center">SOCK_DGRAM</td>
+<td style="text-align:center">数据报套接字</td>
+</tr>
+<tr>
+<td style="text-align:center">SOCK_SEQPACKET</td>
+<td style="text-align:center">有序分组套接字</td>
+</tr>
+<tr>
+<td style="text-align:center">SOCK_RAW</td>
+<td style="text-align:center">原始套接字</td>
+</tr>
+</tbody>
+</table>
+<p>protocol参数应设为某个协议类型常值，或者设为0，以选择给定的family和type组合的系统默认值；</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">protocol</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">IPPROTO_TCP</td>
+<td style="text-align:center">TCP传输协议</td>
+</tr>
+<tr>
+<td style="text-align:center">IPPROTO_UDP</td>
+<td style="text-align:center">UDP传输协议</td>
+</tr>
+<tr>
+<td style="text-align:center">IPPROTO_SCTP</td>
+<td style="text-align:center">SCTP传输协议</td>
+</tr>
+</tbody>
+</table>
+<p>并非所有套接字family与type组合都是有效的，下表给出了一些有效的组合和对应的真正协议。其中标为“是”的项也是有效的，但还没有找到便捷的缩略词。而空白项则是无效组合。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">AF_INET</th>
+<th style="text-align:center">AF_INET6</th>
+<th style="text-align:center">AF_LOCAL</th>
+<th style="text-align:center">AF_ROUTE</th>
+<th style="text-align:center">AF_KEY</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">SOCK_STREAM</td>
+<td style="text-align:center">TCP/SCTP</td>
+<td style="text-align:center">TCP/SCTP</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">SOCK_DGRAM</td>
+<td style="text-align:center">UDP</td>
+<td style="text-align:center">UDP</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">SOCK_SEQPACKET</td>
+<td style="text-align:center">SCTP</td>
+<td style="text-align:center">SCTP</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">SOCK_RAW</td>
+<td style="text-align:center">IPv4</td>
+<td style="text-align:center">IPv6</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">是</td>
+</tr>
+</tbody>
+</table>
+<p>socket函数在成功时返回一个小的非负整数值，它与文件描述符类似，我们把它称为套接字描述符(socket descrptor)，简称sockfd。为了得到这个套接字描述符，我们只是指定了协议族(IPv4、IPv6和Unix)和套接字类型(字节流、数据报或原始套接字)。我们并没有指定本地协议地址和远程协议地址。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/24/Socket套接字API/" data-id="cix39tgwk00015agtdq06yogf" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/12/24/Socket套接字API/" data-id="cix4lvlv30000scgt2pynrdpq" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Socket/">Socket</a></li></ul>
@@ -158,7 +289,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/24/iOS自动打包/" data-id="cix39tgwx00055agt6td0xhbz" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/12/24/iOS自动打包/" data-id="cix4lvlw6000iscgtdtrs9zke" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/打包/">打包</a></li></ul>
@@ -227,7 +358,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/24/iOS10-Notification-Content-Extension/" data-id="cix39tgwe00005agtac3vwk31" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/12/24/iOS10-Notification-Content-Extension/" data-id="cix4lvlv90001scgt2oe8lhct" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Notification/">Notification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS10/">iOS10</a></li></ul>
@@ -316,7 +447,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/21/iOS10-Notification-Service-Extension/" data-id="cix39tgwt00045agt9a9plbe5" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/12/21/iOS10-Notification-Service-Extension/" data-id="cix4lvlvl0004scgt4xcru0ee" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Notification/">Notification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS10/">iOS10</a></li></ul>
@@ -415,7 +546,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/21/iOS10-UserNotification-Framework/" data-id="cix39tgws00035agtmik9j7to" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/12/21/iOS10-UserNotification-Framework/" data-id="cix4lvlvg0003scgtuxnt05qx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/UserNotification/">UserNotification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ios/">ios</a></li></ul>
