@@ -48,9 +48,9 @@
       </nav>
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
@@ -83,17 +83,19 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>###1、firewalld的基本使用<br>启动： systemctl start firewalld<br>查看状态： systemctl status firewalld<br>停止： systemctl disable firewalld<br>禁用： systemctl stop firewalld  </p>
-<p>###2.配置firewalld-cmd</p>
+        <p>#1、firewalld的基本使用<br>启动： systemctl start firewalld<br>查看状态： systemctl status firewalld<br>停止： systemctl disable firewalld<br>禁用： systemctl stop firewalld  </p>
+<p>#2.配置firewalld-cmd</p>
 <p>查看版本： firewall-cmd –version<br>查看帮助： firewall-cmd –help<br>显示状态： firewall-cmd –state<br>查看所有打开的端口： firewall-cmd –zone=public –list-ports<br>更新防火墙规则： firewall-cmd –reload<br>查看区域信息:  firewall-cmd –get-active-zones<br>查看指定接口所属区域： firewall-cmd –get-zone-of-interface=eth0<br>拒绝所有包：firewall-cmd –panic-on<br>取消拒绝状态： firewall-cmd –panic-off<br>查看是否拒绝： firewall-cmd –query-panic  </p>
-<p>###开启或者关闭一个端口<br>添加<br>firewall-cmd –zone=public –add-port=80/tcp –permanent    （–permanent永久生效，没有此参数重启后失效）<br>重新载入<br>firewall-cmd –reload<br>查看<br>firewall-cmd –zone= public –query-port=80/tcp<br>删除<br>firewall-cmd –zone= public –remove-port=80/tcp –permanent  </p>
+<p>#开启或者关闭一个端口<br>添加<br>firewall-cmd –zone=public –add-port=80/tcp –permanent    （–permanent永久生效，没有此参数重启后失效）<br>重新载入<br>firewall-cmd –reload<br>查看<br>firewall-cmd –zone= public –query-port=80/tcp<br>删除<br>firewall-cmd –zone= public –remove-port=80/tcp –permanent  </p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/02/08/firewalld命令使用/" data-id="ciyx1qnfe0008r1c15h46hgdn" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/02/08/firewalld命令使用/" data-id="ciyx1ta2s0000rqc1sztyx71s" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/firewalld/">firewalld</a></li></ul>
+
     </footer>
   </div>
   
@@ -335,7 +337,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/24/Socket套接字API/" data-id="ciyx1qneo0000r1c1hu5c9ga6" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2016/12/24/Socket套接字API/" data-id="ciyx1ta41000nrqc1n564io71" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Socket/">Socket</a></li></ul>
@@ -387,7 +389,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/24/iOS自动打包/" data-id="ciyx1qnf90005r1c1kz9kwefu" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2016/12/24/iOS自动打包/" data-id="ciyx1ta350003rqc1ay92t53f" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/打包/">打包</a></li></ul>
@@ -456,7 +458,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/24/iOS10-Notification-Content-Extension/" data-id="ciyx1qnf30003r1c19l4s7wu9" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2016/12/24/iOS10-Notification-Content-Extension/" data-id="ciyx1ta2y0001rqc1vbam5hnz" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Notification/">Notification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS10/">iOS10</a></li></ul>
@@ -545,7 +547,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/21/iOS10-Notification-Service-Extension/" data-id="ciyx1qnev0001r1c1vicewotc" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2016/12/21/iOS10-Notification-Service-Extension/" data-id="ciyx1ta360004rqc1yyobdr5q" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Notification/">Notification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS10/">iOS10</a></li></ul>
@@ -644,7 +646,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/21/iOS10-UserNotification-Framework/" data-id="ciyx1qnf50004r1c1ly5etlnr" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2016/12/21/iOS10-UserNotification-Framework/" data-id="ciyx1ta3d0005rqc1kalkdqk3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/UserNotification/">UserNotification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ios/">ios</a></li></ul>
@@ -666,9 +668,9 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Mot-clés</h3>
+    <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Notification/">Notification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socket/">Socket</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UserNotification/">UserNotification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS10/">iOS10</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ios/">ios</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/打包/">打包</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Notification/">Notification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socket/">Socket</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UserNotification/">UserNotification</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/firewalld/">firewalld</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS10/">iOS10</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ios/">ios</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/打包/">打包</a></li></ul>
     </div>
   </div>
 
@@ -676,9 +678,9 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Nuage de mot-clés</h3>
+    <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Notification/" style="font-size: 20px;">Notification</a> <a href="/tags/Socket/" style="font-size: 10px;">Socket</a> <a href="/tags/UserNotification/" style="font-size: 10px;">UserNotification</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/iOS10/" style="font-size: 20px;">iOS10</a> <a href="/tags/ios/" style="font-size: 10px;">ios</a> <a href="/tags/打包/" style="font-size: 10px;">打包</a>
+      <a href="/tags/Notification/" style="font-size: 20px;">Notification</a> <a href="/tags/Socket/" style="font-size: 10px;">Socket</a> <a href="/tags/UserNotification/" style="font-size: 10px;">UserNotification</a> <a href="/tags/firewalld/" style="font-size: 10px;">firewalld</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/iOS10/" style="font-size: 20px;">iOS10</a> <a href="/tags/ios/" style="font-size: 10px;">ios</a> <a href="/tags/打包/" style="font-size: 10px;">打包</a>
     </div>
   </div>
 
@@ -695,7 +697,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
         
@@ -732,7 +734,7 @@
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2017 MingleChang<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
