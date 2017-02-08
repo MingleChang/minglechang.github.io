@@ -61,6 +61,46 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-firewalld命令使用" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/08/firewalld命令使用/" class="article-date">
+  <time datetime="2017-02-08T14:20:40.000Z" itemprop="datePublished">2017-02-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/02/08/firewalld命令使用/">firewalld命令使用</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>###1、firewalld的基本使用<br>启动： systemctl start firewalld<br>查看状态： systemctl status firewalld<br>停止： systemctl disable firewalld<br>禁用： systemctl stop firewalld  </p>
+<p>###2.配置firewalld-cmd</p>
+<p>查看版本： firewall-cmd –version<br>查看帮助： firewall-cmd –help<br>显示状态： firewall-cmd –state<br>查看所有打开的端口： firewall-cmd –zone=public –list-ports<br>更新防火墙规则： firewall-cmd –reload<br>查看区域信息:  firewall-cmd –get-active-zones<br>查看指定接口所属区域： firewall-cmd –get-zone-of-interface=eth0<br>拒绝所有包：firewall-cmd –panic-on<br>取消拒绝状态： firewall-cmd –panic-off<br>查看是否拒绝： firewall-cmd –query-panic  </p>
+<p>###开启或者关闭一个端口<br>添加<br>firewall-cmd –zone=public –add-port=80/tcp –permanent    （–permanent永久生效，没有此参数重启后失效）<br>重新载入<br>firewall-cmd –reload<br>查看<br>firewall-cmd –zone= public –query-port=80/tcp<br>删除<br>firewall-cmd –zone= public –remove-port=80/tcp –permanent  </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/02/08/firewalld命令使用/" data-id="ciyx1qnfe0008r1c15h46hgdn" class="article-share-link">Partager</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Socket套接字API" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/12/24/Socket套接字API/" class="article-date">
@@ -295,7 +335,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/24/Socket套接字API/" data-id="cixd7l2oh0005rvgtckkrj6cg" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2016/12/24/Socket套接字API/" data-id="ciyx1qneo0000r1c1hu5c9ga6" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Socket/">Socket</a></li></ul>
@@ -347,7 +387,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/24/iOS自动打包/" data-id="cixd7l2oe0004rvgtqjbk5ouf" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2016/12/24/iOS自动打包/" data-id="ciyx1qnf90005r1c1kz9kwefu" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/打包/">打包</a></li></ul>
@@ -416,7 +456,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/24/iOS10-Notification-Content-Extension/" data-id="cixd7l2nx0000rvgtnflxlcpj" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2016/12/24/iOS10-Notification-Content-Extension/" data-id="ciyx1qnf30003r1c19l4s7wu9" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Notification/">Notification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS10/">iOS10</a></li></ul>
@@ -505,7 +545,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/21/iOS10-Notification-Service-Extension/" data-id="cixd7l2o30001rvgt95ium7gw" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2016/12/21/iOS10-Notification-Service-Extension/" data-id="ciyx1qnev0001r1c1vicewotc" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Notification/">Notification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS10/">iOS10</a></li></ul>
@@ -604,7 +644,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/12/21/iOS10-UserNotification-Framework/" data-id="cixd7l2ob0003rvgtazvolq43" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2016/12/21/iOS10-UserNotification-Framework/" data-id="ciyx1qnf50004r1c1ly5etlnr" class="article-share-link">Partager</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/UserNotification/">UserNotification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ios/">ios</a></li></ul>
@@ -647,7 +687,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li></ul>
     </div>
   </div>
 
@@ -658,6 +698,10 @@
     <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2017/02/08/firewalld命令使用/">firewalld命令使用</a>
+          </li>
         
           <li>
             <a href="/2016/12/24/Socket套接字API/">Socket套接字API</a>
@@ -675,10 +719,6 @@
             <a href="/2016/12/21/iOS10-Notification-Service-Extension/">iOS10 Notification Service Extension</a>
           </li>
         
-          <li>
-            <a href="/2016/12/21/iOS10-UserNotification-Framework/">iOS10 UserNotification.Framework</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -691,7 +731,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2016 MingleChang<br>
+      &copy; 2017 MingleChang<br>
       Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
