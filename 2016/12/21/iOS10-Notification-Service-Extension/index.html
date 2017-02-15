@@ -1,0 +1,620 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS10,Notification," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="在iOS10之前，iOS的推送逻辑是服务器想苹果的APNS服务器发送一条消息，然后由APNS服务器推送到手机，然后由操作系统处理后直接展示给用户，这个过程如下：
+服务器 → APNS → 操作系统 → 用户
+可以看出，这个过程跟我们的App没有任何关系（除了注册推送，获取Token），推送来的任何信息我们都无法对其展示做处理，iOS10苹果推出了Notification Service Exten">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS10 Notification Service Extension">
+<meta property="og:url" content="http://yoursite.com/2016/12/21/iOS10-Notification-Service-Extension/index.html">
+<meta property="og:site_name" content="MingleChang">
+<meta property="og:description" content="在iOS10之前，iOS的推送逻辑是服务器想苹果的APNS服务器发送一条消息，然后由APNS服务器推送到手机，然后由操作系统处理后直接展示给用户，这个过程如下：
+服务器 → APNS → 操作系统 → 用户
+可以看出，这个过程跟我们的App没有任何关系（除了注册推送，获取Token），推送来的任何信息我们都无法对其展示做处理，iOS10苹果推出了Notification Service Exten">
+<meta property="og:image" content="https://github.com/MingleChang/img/raw/master/2016/12/21/9.jpg">
+<meta property="og:image" content="https://github.com/MingleChang/img/raw/master/2016/12/21/10.jpg">
+<meta property="og:image" content="https://github.com/MingleChang/img/raw/master/2016/12/21/11.jpg">
+<meta property="og:image" content="https://github.com/MingleChang/img/raw/master/2016/12/21/12.jpg">
+<meta property="og:image" content="https://github.com/MingleChang/img/raw/master/2016/12/21/13.jpg">
+<meta property="og:image" content="https://github.com/MingleChang/img/raw/master/2016/12/21/14.jpg">
+<meta property="og:image" content="https://github.com/MingleChang/img/raw/master/2016/12/21/15.png">
+<meta property="og:image" content="https://github.com/MingleChang/img/raw/master/2016/12/21/16.jpg">
+<meta property="og:image" content="https://github.com/MingleChang/img/raw/master/2016/12/21/17.jpg">
+<meta property="og:image" content="https://github.com/MingleChang/img/raw/master/2016/12/21/18.jpg">
+<meta property="og:updated_time" content="2016-12-21T15:23:47.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS10 Notification Service Extension">
+<meta name="twitter:description" content="在iOS10之前，iOS的推送逻辑是服务器想苹果的APNS服务器发送一条消息，然后由APNS服务器推送到手机，然后由操作系统处理后直接展示给用户，这个过程如下：
+服务器 → APNS → 操作系统 → 用户
+可以看出，这个过程跟我们的App没有任何关系（除了注册推送，获取Token），推送来的任何信息我们都无法对其展示做处理，iOS10苹果推出了Notification Service Exten">
+<meta name="twitter:image" content="https://github.com/MingleChang/img/raw/master/2016/12/21/9.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+  <title> iOS10 Notification Service Extension | MingleChang </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">MingleChang</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Startseite
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archiv
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS10 Notification Service Extension
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Veröffentlicht am</span>
+            <time itemprop="dateCreated" datetime="2016-12-21T22:32:49+08:00" content="2016-12-21">
+              2016-12-21
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在iOS10之前，iOS的推送逻辑是服务器想苹果的APNS服务器发送一条消息，然后由APNS服务器推送到手机，然后由操作系统处理后直接展示给用户，这个过程如下：</p>
+<p>服务器 → APNS → 操作系统 → 用户</p>
+<p>可以看出，这个过程跟我们的App没有任何关系（除了注册推送，获取Token），推送来的任何信息我们都无法对其展示做处理，iOS10苹果推出了Notification Service Extension，使得推送来的的信息可以通过Service Notification进行二次处理，那么现在我们推送发送到展示的过程就变成了：</p>
+<p>服务器 → APNS → 操作系统 → Service Extension → 用户</p>
+<p>通过Notification Service Extension，我们能在收到推送一条新的推送之后的30s（据说是30s，未测试）之内对推送信息进行二次处理，然后再展示，当然如果我们在规定时间之内未能成功进行二次处理，系统还是会按照当前的推送信息进行展示。</p>
+<p>首先我对我们的项目创建一个Notification Service Extension，Notification Service Extension跟以前的Today Extension一样都属于一个应用扩展，那么就需要创建一个Target：</p>
+<p><img src="https://github.com/MingleChang/img/raw/master/2016/12/21/9.jpg" alt=""></p>
+<p>然后如图选择：</p>
+<p><img src="https://github.com/MingleChang/img/raw/master/2016/12/21/10.jpg" alt=""></p>
+<p>点击Next，输入名称，我们在项目中就多出一个新的target：</p>
+<p><img src="https://github.com/MingleChang/img/raw/master/2016/12/21/11.jpg" alt=""></p>
+<p>这里Bundle Identifier就是项目的bundle id加上.扩展名称，所以我这里的Bundle Identifier为mingle.chang.joke.NotificationService，这里我们就创建一个Notification Service Extension。</p>
+<p>接下来我来看下Notification Service Extension中的处理逻辑，Notification Service Extension为我们创建三个文件：</p>
+<p><img src="https://github.com/MingleChang/img/raw/master/2016/12/21/12.jpg" alt=""></p>
+<p>Info.plist就是Notification Service Extension的配置文件，而NotificationService.h和NotificationService.m则是我们对通知进行二次处理的地方，打开NotificationService.m可以看到，已经系统已经默认帮我们写好了两个方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">- (void)didReceiveNotificationRequest:(UNNotificationRequest *)request withContentHandler:(void (^)(UNNotificationContent * _Nonnull))contentHandler &#123;</div><div class="line">    self.contentHandler = contentHandler;</div><div class="line">    self.bestAttemptContent = [request.content mutableCopy];</div><div class="line"></div><div class="line">    self.contentHandler(self.bestAttemptContent);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)serviceExtensionTimeWillExpire &#123;</div><div class="line">    // Called just before the extension will be terminated by the system.</div><div class="line">    // Use this as an opportunity to deliver your &quot;best attempt&quot; at modified content, otherwise the original push payload will be used.</div><div class="line">    self.contentHandler(self.bestAttemptContent);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>而我们需要做的也就是在这两个方法中进行处理，第一个方法- (void)didReceiveNotificationRequest:(UNNotificationRequest <em>)request withContentHandler:(void (^)(UNNotificationContent </em> _Nonnull))contentHandler就是当Service Extension收到推送时首先执行的方法，第二个方法- (void)serviceExtensionTimeWillExpire就是如果我们对推送的二次处理超时或者处理出现异常情况将会默认执行这个方法，所以对于我们来说主要对第一个方法进行修改，在之前如果我们收到这样一条推送：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;aps&quot;: &#123;</div><div class="line">    &quot;alert&quot;: &#123;</div><div class="line">      &quot;title&quot;: &quot;这是一个标题&quot;,</div><div class="line">      &quot;subtitle&quot;: &quot;这是一个副标题&quot;,</div><div class="line">      &quot;body&quot;: &quot;你收到一个内容&quot;</div><div class="line">    &#125;,</div><div class="line">    &quot;badge&quot;: 1,</div><div class="line">    &quot;sound&quot;: &quot;default&quot;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>那么我们收到的推送将会是如下：</p>
+<p><img src="https://github.com/MingleChang/img/raw/master/2016/12/21/13.jpg" alt=""></p>
+<p>我们说过Notification Service Extension可以对推送进行二次处理之后在进行展示，那么需要我们做哪些处理呢？<br>首先我们需要后台在推送的JSON中增加一个mutable-content字段，且该字段的值为1，那么我们服务器发出的推送就会是下面这个JSON：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;aps&quot;: &#123;</div><div class="line">    &quot;alert&quot;: &#123;</div><div class="line">      &quot;title&quot;: &quot;这是一个标题&quot;,</div><div class="line">      &quot;subtitle&quot;: &quot;这是一个副标题&quot;,</div><div class="line">      &quot;body&quot;: &quot;你收到一个内容&quot;</div><div class="line">    &#125;,</div><div class="line">    &quot;badge&quot;: 1,</div><div class="line">    &quot;sound&quot;: &quot;default&quot;,</div><div class="line">    &quot;mutable-content&quot;: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>只有推送中包含该字段，系统才会将推送发送给Service Extension进行二次处理，然后我们修改- (void)didReceiveNotificationRequest:(UNNotificationRequest <em>)request withContentHandler:(void (^)(UNNotificationContent </em> _Nonnull))contentHandler中的代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">- (void)didReceiveNotificationRequest:(UNNotificationRequest *)request withContentHandler:(void (^)(UNNotificationContent * _Nonnull))contentHandler &#123;</div><div class="line">    self.contentHandler = contentHandler;</div><div class="line">    self.bestAttemptContent = [request.content mutableCopy];</div><div class="line">    </div><div class="line">    // 根据收到的推送request修改推送显示的信息</div><div class="line">    self.bestAttemptContent.title = [NSString stringWithFormat:@&quot;%@ [NotificationService]&quot;, self.bestAttemptContent.title];</div><div class="line">    self.bestAttemptContent.subtitle = [NSString stringWithFormat:@&quot;%@ [NotificationService]&quot;, self.bestAttemptContent.subtitle];</div><div class="line">    self.bestAttemptContent.body = [NSString stringWithFormat:@&quot;%@ [NotificationService]&quot;, self.bestAttemptContent.body];</div><div class="line">    </div><div class="line">    self.contentHandler(self.bestAttemptContent);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先我们介绍这个方法中的两个参数：<br>request：就是我们收到的推送请求<br>contentHandler：是我们对推送进行二次处理完成后的推送信息回调给系统或者通知中心的block<br>接下介绍该方法中的代码：<br>首先我们通过：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">self.contentHandler = contentHandler;</div><div class="line">self.bestAttemptContent = [request.content mutableCopy];</div></pre></td></tr></table></figure>
+<p>将contentHandler和request.content赋值给属性contentHandler和bestAttemptContent；<br>然后我们通过：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">self.bestAttemptContent.title = [NSString stringWithFormat:@&quot;%@ [NotificationService]&quot;, self.bestAttemptContent.title];</div><div class="line">self.bestAttemptContent.subtitle = [NSString stringWithFormat:@&quot;%@ [NotificationService]&quot;, self.bestAttemptContent.subtitle];</div><div class="line">self.bestAttemptContent.body = [NSString stringWithFormat:@&quot;%@ [NotificationService]&quot;, self.bestAttemptContent.body];</div></pre></td></tr></table></figure>
+<p>修改bestAttemptContent的title，subtitle和body；<br>最后我们通过：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">self.contentHandler(self.bestAttemptContent);</div></pre></td></tr></table></figure>
+<p>将修改后的bestAttemptContent回调给系统或者通知中心，这样当我们收到推送信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;aps&quot;: &#123;</div><div class="line">    &quot;alert&quot;: &#123;</div><div class="line">      &quot;title&quot;: &quot;这是一个标题&quot;,</div><div class="line">      &quot;subtitle&quot;: &quot;这是一个副标题&quot;,</div><div class="line">      &quot;body&quot;: &quot;你收到一个内容&quot;</div><div class="line">    &#125;,</div><div class="line">    &quot;badge&quot;: 1,</div><div class="line">    &quot;sound&quot;: &quot;default&quot;,</div><div class="line">    &quot;mutable-content&quot;: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>之后，系统展示的就会是：</p>
+<p><img src="https://github.com/MingleChang/img/raw/master/2016/12/21/14.jpg" alt=""></p>
+<p>可以看到，这里我们将收到的推送的title，subtitle和body都增加了[NotificationService]进行展示。<br>之前说过系统留给我们处理推送的时间是30s，而我们上面的处理估计连1s都不到，那么我们在这30s还能干点其他什么吗？<br>当然，这里留给我们处理足够长，我们能够处理很多东西，比如可以让服务器推送一段加密的信息，我们将信息解密之后在进行展示；又比如可以让服务器推送一条信息的唯一标识，然后我们通过唯一标识向服务器获取需要展示的信息；我们也可以在收到推送后向服务器下载图片，视频，语音进行展示，当然这些文件也有一些要求规定，如图：</p>
+<p><img src="https://github.com/MingleChang/img/raw/master/2016/12/21/15.png" alt=""></p>
+<p>这里我们以下载图片为例：<br>首先我们修改推送JSON，在推送JSON增加一个自定义的字段image，这个字段就是对应的图片的地址，这里我们收到推送JSON则如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;aps&quot;: &#123;</div><div class="line">    &quot;alert&quot;: &#123;</div><div class="line">      &quot;title&quot;: &quot;这是一个标题&quot;,</div><div class="line">      &quot;subtitle&quot;: &quot;这是一个副标题&quot;,</div><div class="line">      &quot;body&quot;: &quot;你收到一个内容&quot;</div><div class="line">    &#125;,</div><div class="line">    &quot;badge&quot;: 1,</div><div class="line">    &quot;sound&quot;: &quot;default&quot;,</div><div class="line">    &quot;mutable-content&quot;: 1,</div><div class="line">    &quot;image&quot;: &quot;xxxxx&quot;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后修改- (void)didReceiveNotificationRequest:(UNNotificationRequest <em>)request withContentHandler:(void (^)(UNNotificationContent </em> _Nonnull))contentHandler中的代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">- (void)didReceiveNotificationRequest:(UNNotificationRequest *)request withContentHandler:(void (^)(UNNotificationContent * _Nonnull))contentHandler &#123;</div><div class="line">    self.contentHandler = contentHandler;</div><div class="line">    self.bestAttemptContent = [request.content mutableCopy];</div><div class="line">    </div><div class="line">    self.bestAttemptContent.title = [NSString stringWithFormat:@&quot;%@ [NotificationService]&quot;, self.bestAttemptContent.title];</div><div class="line">    self.bestAttemptContent.subtitle = [NSString stringWithFormat:@&quot;%@ [NotificationService]&quot;, self.bestAttemptContent.subtitle];</div><div class="line">    self.bestAttemptContent.body = [NSString stringWithFormat:@&quot;%@ [NotificationService]&quot;, self.bestAttemptContent.body];</div><div class="line">    </div><div class="line">    NSDictionary *lApsDic = self.bestAttemptContent.userInfo[@&quot;aps&quot;];</div><div class="line">    NSString *lImageUrl=lApsDic[@&quot;image&quot;];</div><div class="line">    if (lImageUrl.length&gt;0) &#123;</div><div class="line">        [self loadAttachmentForUrlString:lImageUrl withType:@&quot;png&quot; completionHandle:^(UNNotificationAttachment *attach) &#123;</div><div class="line">            if (attach) &#123;</div><div class="line">                self.bestAttemptContent.attachments = [NSArray arrayWithObject:attach];</div><div class="line">            &#125;</div><div class="line">            self.contentHandler(self.bestAttemptContent);</div><div class="line">        &#125;];</div><div class="line">    &#125;else&#123;</div><div class="line">        self.contentHandler(self.bestAttemptContent);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里我们在之前修改body的后增加了图片下载和加入通知信息的代码，首先我们从推送信息中获取image字段，得到图片的链接地址，然后使用loadAttachmentForUrlString:withType:completionHandle:下载我们的图片，该方法的代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">- (void)loadAttachmentForUrlString:(NSString *)urlStr withType:(NSString *)type completionHandle:(void(^)(UNNotificationAttachment *attach))completionHandler&#123;</div><div class="line">    __block UNNotificationAttachment *attachment = nil;</div><div class="line">    NSURL *attachmentURL = [NSURL URLWithString:urlStr];</div><div class="line">    </div><div class="line">    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];</div><div class="line">    NSURLSessionDownloadTask *lTask=[session downloadTaskWithURL:attachmentURL completionHandler:^(NSURL *temporaryFileLocation, NSURLResponse *response, NSError *error) &#123;</div><div class="line">        if (error != nil) &#123;</div><div class="line">            NSLog(@&quot;Error:%@&quot;, error.localizedDescription);</div><div class="line">        &#125; else &#123;</div><div class="line">            NSFileManager *fileManager = [NSFileManager defaultManager];</div><div class="line">            NSURL *localURL = [NSURL fileURLWithPath:[temporaryFileLocation.path stringByAppendingPathExtension:type]];</div><div class="line">            [fileManager moveItemAtURL:temporaryFileLocation toURL:localURL error:&amp;error];</div><div class="line">            </div><div class="line">            NSError *attachmentError = nil;</div><div class="line">            attachment = [UNNotificationAttachment attachmentWithIdentifier:@&quot;&quot; URL:localURL options:nil error:&amp;attachmentError];</div><div class="line">            if (attachmentError) &#123;</div><div class="line">                NSLog(@&quot;Error:%@&quot;, attachmentError.localizedDescription);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        completionHandler(attachment);</div><div class="line">    &#125;];</div><div class="line">    [lTask resume];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个方法就是用于图片下载，并将下载的图片生成一个UNNotificationAttachment对象，然后通过block回调给- (void)didReceiveNotificationRequest:(UNNotificationRequest <em>)request withContentHandler:(void (^)(UNNotificationContent </em> _Nonnull))contentHandler中，然后使用self.bestAttemptContent.attachments = [NSArray arrayWithObject:attach];对bestAttemptContent.attachments进行赋值，最后执行self.contentHandler(self.bestAttemptContent);通过这样，当我们收到上面的推送之后展示给用户的就会是如图所示：</p>
+<p><img src="https://github.com/MingleChang/img/raw/master/2016/12/21/16.jpg" alt=""></p>
+<p>下拉推送信息将会展示为：</p>
+<p><img src="https://github.com/MingleChang/img/raw/master/2016/12/21/17.jpg" alt=""></p>
+<p>这样我们就成功的推送了一条图片信息。</p>
+<p>需要注意的地方：<br>一、是生成UNNotificationAttachment的时候，对应的图片文件名必须有正确的文件后缀名，否则在生成UNNotificationAttachment时将会抛出如下错误：<br>2016-10-30 23:08:17.135250 NotificationService[1581:190750] Error:Unrecognized attachment file type<br>二、如果我们需要对Notification Service Extension进行调试，需要选中Notification Service Extension的Target进行调试，如图：</p>
+<p><img src="https://github.com/MingleChang/img/raw/master/2016/12/21/18.jpg" alt=""></p>
+<p>三、如果在Notification Service Extension中的网络请求不是HTTPS，那么必须该Target的Info.plist中添加App Transport Security Settings说明。</p>
+<p>代码下载：<a href="https://github.com/MingleChang/UserNotificationsTest.git" target="_blank" rel="external">UserNotificationsTest</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS10/" rel="tag">#iOS10</a>
+          
+            <a href="/tags/Notification/" rel="tag">#Notification</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/21/iOS10-UserNotification-Framework/" rel="next" title="iOS10 UserNotification.Framework">
+                <i class="fa fa-chevron-left"></i> iOS10 UserNotification.Framework
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/24/iOS10-Notification-Content-Extension/" rel="prev" title="iOS10 Notification Content Extension">
+                iOS10 Notification Content Extension <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="MingleChang" />
+          <p class="site-author-name" itemprop="name">MingleChang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-name">Artikel</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">Tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">Dieser Artikel hat kein Inhaltsverzeichnis</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MingleChang</span>
+</div>
+
+<div class="powered-by">
+  Erstellt mit  <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
